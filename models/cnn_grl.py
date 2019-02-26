@@ -2,6 +2,7 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, Input
 from keras.models import Model
 from keras.optimizers import rmsprop
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, CSVLogger
+import numpy as np
 
 from .base_model import BaseModel
 from layers.grl import GRL
@@ -15,7 +16,7 @@ class CNNGRL(BaseModel):
         inputs, features = self._build_feature_extractor()
         label_predictions = self._build_label_predictor(features, num_classes)
         domain_predictions = self._build_domain_classifier(features, num_domains)
-        self.model = Model(inputs=inputs, outputs=[label_predictions, domain_predictions])
+        self.model = Model(inputs=inputs, outputs=[label_predictions])
         self.model_unlabelled = Model(inputs=inputs, outputs=[domain_predictions])
 
     def _build_feature_extractor(self):
@@ -52,7 +53,7 @@ class CNNGRL(BaseModel):
         if not self.model and not self.model_unlabelled:
             raise Exception("Trying to compile model but it isn't built")
         opt = rmsprop(lr=10e-4, decay=1e-6)
-        loss={'label_predictor': 'categorical_crossentropy', 'domain_classifier': 'categorical_crossentropy'}
+        loss={'label_predictor': 'categorical_crossentropy'}
         self.model.compile(loss=loss, optimizer=opt, metrics=['accuracy'])
         loss={'domain_classifier': 'categorical_crossentropy'}
         self.model_unlabelled.compile(loss=loss, optimizer=opt, metrics=['accuracy'])
@@ -64,18 +65,17 @@ class CNNGRL(BaseModel):
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=10e-7, verbose=1)
         csv_logger = CSVLogger(log_file)
         for i in range(epochs):
-            self.model.fit(x_train, y_train,
+            self.model_unlabelled.fit(np.concatenate([x_train, x_train_unlabelled], axis=0), np.concatenate([np.array(y_train[1]), y_train_unlabelled[0]], axis=0),
                 batch_size=batch_size,
                 epochs=1,
-                validation_data=(x_test, y_test),
+                validation_data=(np.concatenate([x_test, x_test_unlabelled], axis=0), np.concatenate([np.array(y_test[1]), y_test_unlabelled[0]], axis=0)),
                 shuffle=True,)
-                # callbacks=[reduce_lr, early_stopping, csv_logger],)
-            self.model_unlabelled.fit(x_train_unlabelled, y_train_unlabelled,
+            self.model.fit(x_train, np.array(y_train[0]),
                 batch_size=batch_size,
                 epochs=1,
-                validation_data=(x_test_unlabelled, y_test_unlabelled),
+                validation_data=(x_test, np.array(y_test[0])),
                 shuffle=True,)
-                # callbacks=[reduce_lr, early_stopping, csv_logger],)
+            print(self.model.weights[:4] == self.model_unlabelled.weights[:4])
 
     def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, num_classes, batch_size, epochs, log_file, save_dir, model_name):
         self._build(num_classes=num_classes)

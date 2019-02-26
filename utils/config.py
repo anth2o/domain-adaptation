@@ -14,7 +14,7 @@ IGNORE_LABELS = [
 ]
 
 EPOCHS = 200
-SUBSET = None
+SUBSET = 10000
 MODEL_NAME = 'cnn_grl_train_svhn.h5'
 LOG_FILE = 'logs/cnn_grl_train_svhn.log'
 
