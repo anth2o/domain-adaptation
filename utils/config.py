@@ -11,7 +11,7 @@ MODEL_NAME = 'cnn_train_svhn.h5'
 LOG_FILE = 'logs/cnn_train_svhn.log'
 
 if CONFIG == 'DEBUG':
-    EPOCHS = 3
-    SUBSET = 100
+    EPOCHS = 10
+    SUBSET = 10000
     MODEL_NAME = 'debug.h5'
     LOG_FILE = 'logs/debug.log'

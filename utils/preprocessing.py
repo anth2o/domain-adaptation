@@ -3,6 +3,7 @@ from scipy.io import loadmat
 import numpy as np
 
 def get_data(num_classes, subset=False, num_domains=2, is_svhn=True):
+    # TODO: read MNIST data set and init y_domain correctly
     if is_svhn:
         folder = 'data/svhn/'
         train, test = loadmat(folder + 'train.mat'), loadmat(folder + 'test.mat')
