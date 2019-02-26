@@ -7,7 +7,7 @@ import tensorflow as tf
 from skimage.transform import resize
 from skimage.color import gray2rgb
 
-def get_data(num_classes, image_size, channels, domains, subset=False):
+def get_data(num_classes, image_size, channels, domains, ignore_labels=[], subset=False):
     num_domains = len(domains)
     x_train_list = []
     y_train_label_list = []
@@ -24,11 +24,13 @@ def get_data(num_classes, image_size, channels, domains, subset=False):
         y_test_label = process_y(y_test_label, num_classes)
 
         x_train_list.append(x_train)
-        y_train_label_list.append(y_train_label)
+        if domains[i] not in ignore_labels:
+            y_train_label_list.append(y_train_label)
         y_train_domain_list.append(y_train_domain)
 
         x_test_list.append(x_test)
-        y_test_label_list.append(y_test_label)
+        if domains[i] not in ignore_labels:
+            y_test_label_list.append(y_test_label)
         y_test_domain_list.append(y_test_domain)
 
     x_train = np.concatenate(x_train_list, axis=0)

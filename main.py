@@ -6,7 +6,7 @@ from utils.preprocessing import get_data
 from utils.config import *
 
 
-(x_train, y_train), (x_test, y_test) = get_data(image_size=IMAGE_SIZE, channels=CHANNELS, domains=DOMAINS, num_classes=NUM_CLASSES, subset=SUBSET)
+(x_train, y_train), (x_test, y_test) = get_data(image_size=IMAGE_SIZE, channels=CHANNELS, domains=DOMAINS, num_classes=NUM_CLASSES, subset=SUBSET, ignore_labels=IGNORE_LABELS)
 
 architecture = 'CNNGRL'
 
