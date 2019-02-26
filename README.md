@@ -11,5 +11,5 @@ pip install -r requirements.txt
 ## Download data
 
 ```bash
-python download_data.py
+python utils/download_data.py
 ```
