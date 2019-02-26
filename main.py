@@ -8,10 +8,12 @@ from utils.config import *
 
 (x_train, y_train), (x_test, y_test) = get_data(num_classes=NUM_CLASSES, subset=SUBSET, num_domains=NUM_DOMAINS)
 
-architecture = 'CNNGRL'
+architecture = 'CNN'
 
 if architecture == 'CNN':
-    model = CNN()
+    model = CNN(is_da=False)
+    y_train = y_train[0]
+    y_test = y_test[0]
 elif architecture == 'CNNGRL':
     model = CNNGRL()
     

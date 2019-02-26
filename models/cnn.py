@@ -11,7 +11,7 @@ class CNN(BaseModel):
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = Dropout(0.25)(x)
 
-        x = Conv2D(64, (3, 3), padding='same', activation='relu')(inputs)
+        x = Conv2D(64, (3, 3), padding='same', activation='relu')(x)
         x = Conv2D(64, (3, 3), activation='relu')(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = Dropout(0.25)(x)
