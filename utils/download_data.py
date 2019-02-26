@@ -1,5 +1,6 @@
 import os
 import os.path as op
+import tarfile
 try:
     from urllib.request import urlretrieve
 except ImportError:
@@ -8,10 +9,10 @@ except ImportError:
 folder = 'data/'
 
 mnist_urls = {
-    'train_images.tar.gz': 'http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz',
-    'train_labels': 'http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz',
-    'test_images': 'http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz',
-    'test_labels': 'http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz'
+    'train_images.gz': 'http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz',
+    'train_labels.gz': 'http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz',
+    'test_images.gz': 'http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz',
+    'test_labels.gz': 'http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz'
 }
 
 svhn_urls = {
@@ -21,8 +22,8 @@ svhn_urls = {
 }
 
 data_urls = [
-    mnist_urls,
-    svhn_urls
+    # mnist_urls,
+    svhn_urls,
 ]
 data_folder = [
     'mnist',
@@ -31,10 +32,13 @@ data_folder = [
 
 if not op.exists(folder):
     os.mkdir(folder)
-    for i in range(len(data_urls)):
-        if not op.exists(folder + data_folder[i]):
-            os.mkdir(folder + data_folder[i])
-            print('Downloading data for ' + data_folder[i])
-            for filename, url in data_urls[i].items():
-                urlretrieve(url, folder + data_folder[i] + '/' + filename)
+for i in range(len(data_urls)):
+    if not op.exists(folder + data_folder[i]):
+        os.mkdir(folder + data_folder[i])
+        print('Downloading data for ' + data_folder[i])
+        for filename, url in data_urls[i].items():
+            fname = folder + data_folder[i] + '/' + filename
+            urlretrieve(url, fname)
+        # os.sys('')
+    
 
