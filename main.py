@@ -2,11 +2,11 @@ import numpy as np
 
 from models.cnn import CNN
 from models.cnn_grl import CNNGRL
-from utils.preprocessing import get_data
+from utils.preprocessing import Preprocessor
 from utils.config import *
 
-
-(x_train, y_train), (x_test, y_test) = get_data(image_size=IMAGE_SIZE, channels=CHANNELS, domains=DOMAINS, num_classes=NUM_CLASSES, subset=SUBSET, ignore_labels=IGNORE_LABELS)
+pp = Preprocessor(num_classes=NUM_CLASSES, domains=DOMAINS, ignore_labels=IGNORE_LABELS, image_size=IMAGE_SIZE, channels=CHANNELS, subset=SUBSET)
+((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_train_unlabelled), (x_test_unlabelled, y_test_unlabelled)) = pp.get_data()
 
 architecture = 'CNNGRL'
 
