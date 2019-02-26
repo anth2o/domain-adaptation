@@ -37,8 +37,8 @@ class Preprocessor():
             y_train_domain = self.get_y_domain(y_train_label, domain_value=ignore)
             y_test_domain = self.get_y_domain(y_test_label, domain_value=ignore)
 
-            y_train_label = self.process_y(y_train_label)
-            y_test_label = self.process_y(y_test_label)
+            y_train_label = self.process_y(y_train_label, self.num_classes)
+            y_test_label = self.process_y(y_test_label, self.num_classes)
 
             x_train_list.append(x_train)
             if not ignore:
@@ -60,7 +60,9 @@ class Preprocessor():
             y_test_label = np.concatenate(y_test_label_list, axis=0)
         y_test_domain = np.concatenate(y_test_domain_list, axis=0)
 
-        return (x_train, [y_train_domain]), (x_test, [y_test_domain])
+        if ignore:
+            return (x_train, [y_train_domain]), (x_test, [y_test_domain])
+        return (x_train, [y_train_label, y_train_domain]), (x_test, [y_test_label, y_test_domain])
 
 
     def get_one_domain_data(self, domain='svhn'):
@@ -100,13 +102,13 @@ class Preprocessor():
         x /= 255
         return x
 
-    def process_y(self, y):
-        y = keras.utils.to_categorical(y, self.num_classes)
+    def process_y(self, y, num_categories):
+        y = keras.utils.to_categorical(y, num_categories)
         return y
 
     def get_y_domain(self, y_label, domain_value):
         y_domain = np.ones_like(y_label) * domain_value
-        return self.process_y(y_domain)
+        return self.process_y(y_domain, self.num_domains)
 
     def read_svhn(self, dataset):
         x = dataset['X']
