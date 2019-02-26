@@ -5,6 +5,9 @@ from .base_model import BaseModel
 from layers.grl import GRL
 
 class CNNGRL(BaseModel):
+    def __init__(self, loss={'label_predictor': 'categorical_crossentropy', 'domain_classifier': 'categorical_crossentropy'}):
+            self.loss = loss
+            
     def _build(self, num_classes, num_domains=2):
         inputs, features = self._build_feature_extractor()
         label_predictions = self._build_label_predictor(features, num_classes)

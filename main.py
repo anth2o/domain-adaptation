@@ -11,7 +11,7 @@ from utils.config import *
 architecture = 'CNNGRL'
 
 if architecture == 'CNN':
-    model = CNN(is_da=False)
+    model = CNN()
     y_train = y_train[0]
     y_test = y_test[0]
 elif architecture == 'CNNGRL':

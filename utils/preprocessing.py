@@ -5,6 +5,7 @@ import gzip
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from skimage.transform import resize
+from skimage.color import gray2rgb
 
 def get_data(num_classes, image_size, channels, domains, subset=False):
     num_domains = len(domains)
@@ -38,10 +39,6 @@ def get_data(num_classes, image_size, channels, domains, subset=False):
     y_test_label = np.concatenate(y_test_label_list, axis=0)
     y_test_domain = np.concatenate(y_test_domain_list, axis=0)
 
-    print(x_train.shape)
-    print(y_train_domain.shape)
-    print(y_train_label.shape)
-
     return (x_train, [y_train_label, y_train_domain]), (x_test, [y_test_label, y_test_domain])
 
 
@@ -60,14 +57,13 @@ def get_single_data(num_classes, image_size, channels, num_domains=2, subset=Fal
         x_test = x_test[:subset]
         y_test_label = y_test_label[:subset]   
 
-    print('x_train shape:', x_train.shape)
+    print('x_train {} shape: {}'.format(domain, x_train.shape))
     print(x_train.shape[0], 'train samples')
     print(x_test.shape[0], 'test samples')
 
     x_train = process_x(x_train, image_size, channels)
     x_test = process_x(x_test, image_size, channels)
-
-
+    
     return (x_train, y_train_label), (x_test, y_test_label)
 
 def process_x(x, image_size, channels, subset=False):
@@ -79,15 +75,12 @@ def process_x(x, image_size, channels, subset=False):
         x = np.moveaxis(x, -1, 0)
     # Convert single channel to 3 channels picture
     if len(x.shape) < 4 or x.shape[3] == 1:
-        x = np.expand_dims(x, axis=-1)
-        x = np.concatenate([x for i in range(channels)], axis=-1)
+        x = gray2rgb(x)
     x /= 255
     return x
 
 def process_y(y, num_classes):
-    print(y.shape)
     y = keras.utils.to_categorical(y, num_classes)
-    print(y.shape)
     return y
 
 def get_y_domain(y_label, num_domains, domain_value):

@@ -6,9 +6,9 @@ from keras.optimizers import rmsprop
 import os
 
 class BaseModel():
-    def __init__(self, is_da=True):
+    def __init__(self, loss='categorical_crossentropy'):
         self.model = None
-        self.is_da = is_da
+        self.loss = loss
 
     def _build(self, num_classes):
         inputs = Input(shape=(32, 32, 3))
@@ -21,11 +21,7 @@ class BaseModel():
         if not self.model:
             raise Exception("Trying to compile model but it isn't built")
         opt = rmsprop(lr=10e-4, decay=1e-6)
-        if self.is_da:
-            loss={'label_predictor': 'categorical_crossentropy', 'domain_classifier': 'categorical_crossentropy'}
-        else:
-            loss = 'categorical_crossentropy'
-        self.model.compile(loss=loss, optimizer=opt, metrics=['accuracy'])
+        self.model.compile(loss=self.loss, optimizer=opt, metrics=['accuracy'])
 
     def _fit(self, x_train, y_train, x_test, y_test, batch_size=32, epochs=5, log_file='logs/base.log'):
         if not self.model:
