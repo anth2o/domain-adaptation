@@ -67,5 +67,4 @@ class BaseModel():
         self._build(num_classes)
         self._compile()
         self._load_weights(path)
-        print(self.model.summary())
         self._evaluate(x_test, y_test)

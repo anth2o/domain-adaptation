@@ -94,9 +94,6 @@ class Preprocessor():
             y_train_domain = self.get_y_domain(y_train_label, domain_value=i)
             y_test_domain = self.get_y_domain(y_test_label, domain_value=i)
 
-            y_train_label = self.process_y(y_train_label, self.num_classes)
-            y_test_label = self.process_y(y_test_label, self.num_classes)
-
             self.x_train_dict[domain] = x_train
             self.y_train_label_dict[domain] = y_train_label
             self.y_train_domain_dict[domain] = y_train_domain
@@ -128,6 +125,9 @@ class Preprocessor():
 
         x_train = self.process_x(x_train)
         x_test = self.process_x(x_test)
+
+        y_train_label = self.process_y(y_train_label, self.num_classes)
+        y_test_label = self.process_y(y_test_label, self.num_classes)
         
         return (x_train, y_train_label), (x_test, y_test_label)
 
@@ -149,7 +149,7 @@ class Preprocessor():
         return y
 
     def get_y_domain(self, y_label, domain_value):
-        y_domain = np.ones_like(y_label) * domain_value
+        y_domain = np.ones((y_label.shape[0],)) * domain_value
         return self.process_y(y_domain, self.num_domains)
 
     def read_svhn(self, dataset):
