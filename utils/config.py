@@ -1,4 +1,4 @@
-CONFIG = 'PROD'
+CONFIG = 'DEBUG'
 
 BATCH_SIZE = 32
 NUM_CLASSES = 10
@@ -9,7 +9,7 @@ DOMAINS = [
     'mnist',
     'svhn'
 ]
-IGNORE_LABELS = [
+DOMAINS_IGNORE_LABELS = [
     'mnist'
 ]
 

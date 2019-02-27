@@ -13,3 +13,11 @@ pip install -r requirements.txt
 ```bash
 python utils/download_data.py
 ```
+
+## Results
+
+CNN-GRL trained on train set for SVHN (label) and MNIST (no label):
+    accuracy on MNIST test set: 0.56
+
+CNN trained on train set for SVHN (label) and MNIST (no label):
+    accuracy on MNIST test set: 0.11

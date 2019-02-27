@@ -6,63 +6,80 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from skimage.transform import resize
 from skimage.color import gray2rgb
+from utils.config import *
 
 class Preprocessor():
-    def __init__(self, num_classes, domains, ignore_labels, image_size, channels, subset):
+    def __init__(self, num_classes=NUM_CLASSES, domains=DOMAINS, domains_ignore_labels=DOMAINS_IGNORE_LABELS, image_size=IMAGE_SIZE, channels=CHANNELS, subset=SUBSET):
         self.num_classes = num_classes
         self.domains = domains
         self.num_domains = len(domains)
-        self.ignore_labels = ignore_labels
-        self.not_ignore_labels = list(set(domains) - set(ignore_labels))
+        self.domains_not_ignore_labels = list(set(domains) - set(domains_ignore_labels))
         self.image_size = image_size
         self.channels = channels
         self.subset = subset
 
     def get_data(self):
-       return self.get_one_type_data(ignore=False), self.get_one_type_data(ignore=True)
+        """
+        Returns:
+        ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_train_unlabelled), (x_test_unlabelled, y_test_unlabelled))
+        With ((x_train, y_train), (x_test, y_test)) the data for the domains where the label is available
+        And ((x_train_unlabelled, y_train_unlabelled), (x_test_unlabelled, y_test_unlabelled)) all the data but with no label data
+        """
+        self.get_dict_data()
 
-    def get_one_type_data(self, ignore):
-        x_train_list = []
-        y_train_label_list = []
-        y_train_domain_list = []
-        x_test_list = []
-        y_test_label_list = []
-        y_test_domain_list = []
-        if ignore:
-            local_domains = self.ignore_labels
-        else:
-            local_domains = self.not_ignore_labels
-        for i in range(len(local_domains)):
-            (x_train, y_train_label), (x_test, y_test_label) = self.get_one_domain_data(domain=local_domains[i])
-            y_train_domain = self.get_y_domain(y_train_label, domain_value=ignore)
-            y_test_domain = self.get_y_domain(y_test_label, domain_value=ignore)
+
+        x_train = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains_not_ignore_labels]])
+        y_train_label = self.concatenate([y for y in [self.y_train_label_dict[key] for key in self.domains_not_ignore_labels]])
+        y_train_domain = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains_not_ignore_labels]])
+        y_train = {
+            'label': y_train_label,
+            'domain': y_train_domain
+            }
+
+        x_test = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains_not_ignore_labels]])
+        y_test_label = self.concatenate([y for y in [self.y_test_label_dict[key] for key in self.domains_not_ignore_labels]])
+        y_test_domain = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains_not_ignore_labels]])
+        y_test = {
+            'label': y_test_label,
+            'domain': y_test_domain
+            }
+
+        x_train_unlabelled = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains]])
+        y_train_unlabelled = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains]])
+
+        x_test_unlabelled = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains]])
+        y_test_unlabelled = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains]])
+
+        return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_test_unlabelled), (x_test_unlabelled, y_test_unlabelled))
+
+    def get_dict_data(self):
+        self.x_train_dict = {}
+        self.y_train_label_dict = {}
+        self.y_train_domain_dict = {}
+        self.x_test_dict = {}
+        self.y_test_label_dict = {}
+        self.y_test_domain_dict = {}
+        for i in range(self.num_domains):
+            domain = self.domains[i]
+            (x_train, y_train_label), (x_test, y_test_label) = self.get_one_domain_data(domain=domain)
+            y_train_domain = self.get_y_domain(y_train_label, domain_value=i)
+            y_test_domain = self.get_y_domain(y_test_label, domain_value=i)
 
             y_train_label = self.process_y(y_train_label, self.num_classes)
             y_test_label = self.process_y(y_test_label, self.num_classes)
 
-            x_train_list.append(x_train)
-            if not ignore:
-                y_train_label_list.append(y_train_label)
-            y_train_domain_list.append(y_train_domain)
+            self.x_train_dict[domain] = x_train
+            self.y_train_label_dict[domain] = y_train_label
+            self.y_train_domain_dict[domain] = y_train_domain
 
-            x_test_list.append(x_test)
-            if not ignore:
-                y_test_label_list.append(y_test_label)
-            y_test_domain_list.append(y_test_domain)
+            self.x_test_dict[domain] = x_test
+            self.y_test_label_dict[domain] = y_test_label
+            self.y_test_domain_dict[domain] = y_test_domain
 
-        x_train = np.concatenate(x_train_list, axis=0)
-        if not ignore:
-            y_train_label = np.concatenate(y_train_label_list, axis=0)
-        y_train_domain = np.concatenate(y_train_domain_list, axis=0)
-
-        x_test = np.concatenate(x_test_list, axis=0)
-        if not ignore:
-            y_test_label = np.concatenate(y_test_label_list, axis=0)
-        y_test_domain = np.concatenate(y_test_domain_list, axis=0)
-
-        if ignore:
-            return (x_train, [y_train_domain]), (x_test, [y_test_domain])
-        return (x_train, [y_train_label, y_train_domain]), (x_test, [y_test_label, y_test_domain])
+    def concatenate(self, _list):
+        if len(_list) > 0:
+            return np.concatenate(_list, axis=0)
+        return np.array([])
 
 
     def get_one_domain_data(self, domain='svhn'):

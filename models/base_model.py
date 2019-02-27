@@ -4,26 +4,26 @@ from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, CSVLogger
 from keras.optimizers import rmsprop
 import os
+from utils.config import *
 
 class BaseModel():
     def __init__(self, loss='categorical_crossentropy'):
         self.model = None
         self.loss = loss
 
-    def _build(self, num_classes):
+    def _build(self, num_classes=NUM_CLASSES):
         inputs = Input(shape=(32, 32, 3))
         x = Flatten()(inputs)
         predictions = Dense(num_classes, activation='softmax')(x)
         self.model = Model(inputs=inputs, outputs=predictions)
 
     def _compile(self):
-        # TODO: maximize domain loss ?
         if not self.model:
             raise Exception("Trying to compile model but it isn't built")
         opt = rmsprop(lr=10e-4, decay=1e-6)
         self.model.compile(loss=self.loss, optimizer=opt, metrics=['accuracy'])
 
-    def _fit(self, x_train, y_train, x_test, y_test, batch_size=32, epochs=5, log_file='logs/base.log'):
+    def _fit(self, x_train, y_train, x_test, y_test, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=LOG_FILE):
         if not self.model:
             raise Exception("Trying to fit model but it isn't built")
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=10e-4, patience=10, restore_best_weights=True, verbose=1)
@@ -36,7 +36,7 @@ class BaseModel():
         shuffle=True,
         callbacks=[reduce_lr, early_stopping, csv_logger],)
 
-    def _save(self, save_dir, model_name):
+    def _save(self, save_dir=SAVE_DIR, model_name=MODEL_NAME):
         if not self.model:
             raise Exception("Trying to save model but it isn't built")
         if not os.path.isdir(save_dir):
@@ -52,10 +52,20 @@ class BaseModel():
         print('Test loss:', scores[0])
         print('Test accuracy:', scores[1])
 
-    def _run_all(self, x_train, x_test, y_train, y_test, num_classes, batch_size, epochs, log_file, save_dir, model_name):
+    def _run_all(self, x_train, x_test, y_train, y_test, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=LOG_FILE, save_dir=SAVE_DIR, model_name=MODEL_NAME):
         self._build(num_classes=num_classes)
         self._compile()
         print(self.model.summary())
         self._fit(x_train, y_train, x_test, y_test, batch_size=batch_size, epochs=epochs, log_file=log_file)
         self._save(save_dir=save_dir, model_name=model_name)
+        self._evaluate(x_test, y_test)
+
+    def _load_weights(self, path):
+        self.model.load_weights(path)
+
+    def _load_and_evaluate(self, path, x_test, y_test, num_classes=NUM_CLASSES):
+        self._build(num_classes)
+        self._compile()
+        self._load_weights(path)
+        print(self.model.summary())
         self._evaluate(x_test, y_test)
