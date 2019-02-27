@@ -13,6 +13,7 @@ class Preprocessor():
         self.num_classes = num_classes
         self.domains = domains
         self.num_domains = len(domains)
+        self.domains_ignore_labels = domains_ignore_labels
         self.domains_not_ignore_labels = list(set(domains) - set(domains_ignore_labels))
         self.image_size = image_size
         self.channels = channels
@@ -44,19 +45,41 @@ class Preprocessor():
             'domain': y_test_domain
             }
 
-        x_train_unlabelled = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains]])
-        y_train_unlabelled = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains]])
+        x_train_unlabelled = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains_ignore_labels]])
+        y_train_unlabelled = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains_ignore_labels]])
         y_train_unlabelled = {
             'domain': y_train_unlabelled
         }
 
-        x_test_unlabelled = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains]])
-        y_test_unlabelled = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains]])
+        x_test_unlabelled = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains_ignore_labels]])
+        y_test_unlabelled = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains_ignore_labels]])
         y_test_unlabelled = {
             'domain': y_test_unlabelled
         }
 
-        return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_test_unlabelled), (x_test_unlabelled, y_test_unlabelled))
+        print('In labelled data: {}'.format(self.domains_not_ignore_labels))
+
+        print('x_train: {}'.format(x_train.shape))
+        print('y_train_label: {}'.format(y_train_label.shape))
+        print('y_train_domain: {}'.format(y_train_domain.shape))
+
+        print('x_test: {}'.format(x_test.shape))
+        print('y_test_label: {}'.format(y_test_label.shape))
+        print('y_test_domain: {}'.format(y_test_domain.shape))
+
+        print('')
+
+        print('In unlabelled data: {}'.format(self.domains_ignore_labels))
+
+        print('x_train_unlabelled: {}'.format(x_train_unlabelled.shape))
+        print('y_train_unlabelled: {}'.format(y_train_unlabelled['domain'].shape))
+
+        print('x_test_unlabelled: {}'.format(x_test_unlabelled.shape))
+        print('y_test_unlabelled: {}'.format(y_test_unlabelled['domain'].shape))
+
+        print('')
+
+        return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_train_unlabelled), (x_test_unlabelled, y_test_unlabelled))
 
     def get_dict_data(self):
         self.x_train_dict = {}
@@ -70,9 +93,6 @@ class Preprocessor():
             (x_train, y_train_label), (x_test, y_test_label) = self.get_one_domain_data(domain=domain)
             y_train_domain = self.get_y_domain(y_train_label, domain_value=i)
             y_test_domain = self.get_y_domain(y_test_label, domain_value=i)
-
-            y_train_label = self.process_y(y_train_label, self.num_classes)
-            y_test_label = self.process_y(y_test_label, self.num_classes)
 
             self.x_train_dict[domain] = x_train
             self.y_train_label_dict[domain] = y_train_label
@@ -100,15 +120,14 @@ class Preprocessor():
         if self.subset:
             x_train = x_train[:self.subset]
             y_train_label = y_train_label[:self.subset]
-            x_test = x_test[:self.subset]
-            y_test_label = y_test_label[:self.subset]   
-
-        print('x_train {} shape: {}'.format(domain, x_train.shape))
-        print(x_train.shape[0], 'train samples')
-        print(x_test.shape[0], 'test samples')
+            x_test = x_test[:int(self.subset/4.0)]
+            y_test_label = y_test_label[:int(self.subset/4.0)]   
 
         x_train = self.process_x(x_train)
         x_test = self.process_x(x_test)
+
+        y_train_label = self.process_y(y_train_label, self.num_classes)
+        y_test_label = self.process_y(y_test_label, self.num_classes)
         
         return (x_train, y_train_label), (x_test, y_test_label)
 
@@ -130,7 +149,7 @@ class Preprocessor():
         return y
 
     def get_y_domain(self, y_label, domain_value):
-        y_domain = np.ones_like(y_label) * domain_value
+        y_domain = np.ones((y_label.shape[0],)) * domain_value
         return self.process_y(y_domain, self.num_domains)
 
     def read_svhn(self, dataset):

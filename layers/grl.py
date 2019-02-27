@@ -1,6 +1,7 @@
 import tensorflow as tf
 from keras import backend as K
 from keras.layers import Layer
+from uuid import uuid4
 
 class GRL(Layer):
     def __init__(self, _lambda=1, **kwargs):
@@ -12,7 +13,7 @@ class GRL(Layer):
         super(GRL, self).build(input_shape)
 
     def call(self, x):
-        grad_name = 'GRL'
+        grad_name = 'GRL-' + str(uuid4())
 
         @tf.RegisterGradient(grad_name)
         def _flip_gradients(op, grad):

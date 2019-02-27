@@ -14,10 +14,23 @@ pip install -r requirements.txt
 python utils/download_data.py
 ```
 
+## Train a specific model
+
+Change model name in train.py (CNN or CNNGRL)
+
+```bash
+python train.py
+```
+
+## Load weights and evaluate models
+
+```bash
+python evaluate.py
+```
+
 ## Results
-
-CNN-GRL trained on train set for SVHN (label) and MNIST (no label):
-    accuracy on MNIST test set: 0.56
-
-CNN trained on train set for SVHN (label) and MNIST (no label):
-    accuracy on MNIST test set: 0.11
+    
+| Network       | Source (accuracy)       | Target (accuracy) |
+| ------------- |:-------------:| -----:|
+| CNN           | SVHN (0.91)   | MNIST (0.60) |
+| CNN-GRL       | SVHN (0.88)   | MNIST (0.59) |

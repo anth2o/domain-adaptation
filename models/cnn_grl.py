@@ -33,32 +33,32 @@ class CNNGRL(BaseModel):
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = Dropout(0.25)(x)
 
+        x = Flatten()(x)
         x = Dense(512, activation='relu')(x)
-        x = Dropout(0.5)(x)
+        features = Dropout(0.5)(x)
 
         features = Flatten()(x)
         return inputs_label, inputs_domain, features
 
     def _build_label_predictor(self, features, num_classes):
         x = Dense(32, activation='relu')(features)
-        outputs = Dense(num_classes, activation='softmax', name='label_predictor')(x)
+        outputs = Dense(num_classes, activation='softmax',
+                        name='label_predictor')(x)
         return outputs
 
     def _build_domain_classifier(self, features, num_domains):
-        x = GRL()(features)
+        x = GRL(0.01)(features)
         x = Dense(32, activation='relu')(x)
-        outputs = Dense(num_domains, activation='softmax', name='domain_classifier')(x)
+        outputs = Dense(num_domains, activation='softmax',
+                        name='domain_classifier')(x)
         return outputs
 
     def _compile(self):
         if not self.model:
             raise Exception("Trying to compile model but it isn't built")
-        opt = rmsprop(lr=10e-4, decay=1e-6)
-        self.model.compile(loss=self.loss, optimizer=opt, metrics=['accuracy'])
-        # loss={'domain_classifier': 'categorical_crossentropy'}
-        # self.model_unlabelled.compile(loss=loss, optimizer=opt, metrics=['accuracy'])
+        self.model.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'])
 
-    def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=LOG_FILE):
+    def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE):
         if not self.model:
             raise Exception("Trying to fit model but it isn't built")
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=10e-4, patience=10, restore_best_weights=True, verbose=1)
@@ -76,14 +76,12 @@ class CNNGRL(BaseModel):
             validation_data=([x_test, x_test_unlabelled], [y_test['label'], y_test['domain']]),
             shuffle=True,)
 
-    def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=LOG_FILE, save_dir=SAVE_DIR, model_name=MODEL_NAME):
+    def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE, save_dir=SAVE_DIR, model_name=CNN_GRL_MODEL_NAME):
         self._build(num_classes=num_classes)
         self._compile()
         print(self.model.summary())
-        self._fit(x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=batch_size, epochs=epochs, log_file=log_file)
+        print(self.model_unlabelled.summary())
+        self._fit(x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled,
+                  x_test_unlabelled, y_test_unlabelled, batch_size=batch_size, epochs=epochs, log_file=log_file)
         self._save(save_dir=save_dir, model_name=model_name)
         self._evaluate(x_test, y_test['label'])
-
-
-
-
