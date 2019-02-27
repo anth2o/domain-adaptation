@@ -14,9 +14,12 @@ DOMAINS_IGNORE_LABELS = [
 ]
 
 EPOCHS = 200
-SUBSET = 20000
-MODEL_NAME = 'cnn_train_svhn.h5'
-LOG_FILE = 'logs/cnn_train_svhn.log'
+SUBSET = 10000
+
+CNN_GRL_MODEL_NAME = 'cnn_grl_train_svhn.h5'
+CNN_GRL_LOG_FILE = 'logs/cnn_grl_train_svhn.log'
+CNN_MODEL_NAME = 'cnn_train_svhn.h5'
+CNN_LOG_FILE = 'logs/cnn_train_svhn.log'
 
 if CONFIG == 'DEBUG':
     EPOCHS = 10

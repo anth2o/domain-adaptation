@@ -79,7 +79,7 @@ class Preprocessor():
 
         print('')
 
-        return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_test_unlabelled), (x_test_unlabelled, y_test_unlabelled))
+        return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_train_unlabelled), (x_test_unlabelled, y_test_unlabelled))
 
     def get_dict_data(self):
         self.x_train_dict = {}
@@ -123,8 +123,8 @@ class Preprocessor():
         if self.subset:
             x_train = x_train[:self.subset]
             y_train_label = y_train_label[:self.subset]
-            x_test = x_test[:self.subset]
-            y_test_label = y_test_label[:self.subset]   
+            x_test = x_test[:int(self.subset/4.0)]
+            y_test_label = y_test_label[:int(self.subset/4.0)]   
 
         x_train = self.process_x(x_train)
         x_test = self.process_x(x_test)
