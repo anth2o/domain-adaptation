@@ -57,12 +57,8 @@ class CNNGRL(BaseModel):
     def _compile(self):
         if not self.model and not self.model_unlabelled:
             raise Exception("Trying to compile model but it isn't built")
-        opt = rmsprop(lr=10e-5, decay=1e-6)
-        loss = {'label_predictor': 'categorical_crossentropy'}
-        self.model.compile(loss=loss, optimizer=opt, metrics=['accuracy'])
-        loss = {'domain_classifier': 'categorical_crossentropy'}
-        self.model_unlabelled.compile(
-            loss=loss, optimizer=opt, metrics=['accuracy'])
+        self.model.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'])
+        self.model_unlabelled.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'])
 
     def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE):
         if not self.model:

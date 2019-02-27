@@ -33,4 +33,4 @@ python evaluate.py
 | Network       | Source (accuracy)       | Target (accuracy) |
 | ------------- |:-------------:| -----:|
 | CNN           | SVHN (0.91)   | MNIST (0.60) |
-| CNN-GRL       | SVHN          | MNIST |
+| CNN-GRL       | SVHN (0.88)   | MNIST (0.59) |
