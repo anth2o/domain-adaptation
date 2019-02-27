@@ -8,7 +8,7 @@ from utils.config import *
 pp = Preprocessor()
 ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_train_unlabelled), (x_test_unlabelled, y_test_unlabelled)) = pp.get_data()
 
-architecture = 'CNN'
+architecture = 'CNNGRL'
 
 if architecture == 'CNN':
     model = CNN()

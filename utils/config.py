@@ -1,4 +1,4 @@
-CONFIG = 'PROD'
+CONFIG = 'DEBUG'
 
 BATCH_SIZE = 32
 NUM_CLASSES = 10
@@ -20,6 +20,6 @@ LOG_FILE = 'logs/cnn_train_svhn.log'
 
 if CONFIG == 'DEBUG':
     EPOCHS = 10
-    SUBSET = 10
+    SUBSET = 50
     MODEL_NAME = 'debug.h5'
     LOG_FILE = 'logs/debug.log'
