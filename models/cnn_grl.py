@@ -65,17 +65,16 @@ class CNNGRL(BaseModel):
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=10e-7, verbose=1)
         csv_logger = CSVLogger(log_file)
         for i in range(epochs):
-            self.model_unlabelled.fit(x_train_unlabelled, y_train_unlabelled,
+            self.model_unlabelled.fit(x_train_unlabelled, y_train_unlabelled['domain'],
                 batch_size=batch_size,
                 epochs=1,
-                validation_data=(x_test_unlabelled, y_test_unlabelled),
+                validation_data=(x_test_unlabelled, y_test_unlabelled['domain']),
                 shuffle=True,)
             self.model.fit(x_train, y_train['label'],
                 batch_size=batch_size,
                 epochs=1,
                 validation_data=(x_test, y_test['label']),
                 shuffle=True,)
-            print(self.model.weights[:4] == self.model_unlabelled.weights[:4])
 
     def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=LOG_FILE, save_dir=SAVE_DIR, model_name=MODEL_NAME):
         self._build(num_classes=num_classes)

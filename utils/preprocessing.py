@@ -46,9 +46,15 @@ class Preprocessor():
 
         x_train_unlabelled = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains]])
         y_train_unlabelled = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains]])
+        y_train_unlabelled = {
+            'domain': y_train_unlabelled
+        }
 
         x_test_unlabelled = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains]])
         y_test_unlabelled = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains]])
+        y_test_unlabelled = {
+            'domain': y_test_unlabelled
+        }
 
         return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_test_unlabelled), (x_test_unlabelled, y_test_unlabelled))
 
