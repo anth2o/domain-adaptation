@@ -14,6 +14,20 @@ pip install -r requirements.txt
 python utils/download_data.py
 ```
 
+## Train a specific model
+
+Change model name in train.py (CNN or CNNGRL)
+
+```bash
+python train.py
+```
+
+# Load weights and evaluate models
+
+```bash
+python evaluate.py
+```
+
 ## Results
     
 | Network       | Source        | Target| Accuracy |
