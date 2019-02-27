@@ -65,7 +65,7 @@ class CNNGRL(BaseModel):
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=10e-7, verbose=1)
         csv_logger = CSVLogger(log_file)
         for i in range(epochs):
-            self.model_unlabelled.fit(x_train_unlabelled, y_train_unlabelled['domain'],
+            self.model_unlabelled.fit(np.concatenate([x_train_unlabelled, x_train], axis=0), np.concatenate([y_train_unlabelled['domain'], y_train['domain']], axis=0),
                 batch_size=batch_size,
                 epochs=1,
                 validation_data=(x_test_unlabelled, y_test_unlabelled['domain']),

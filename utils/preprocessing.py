@@ -13,6 +13,7 @@ class Preprocessor():
         self.num_classes = num_classes
         self.domains = domains
         self.num_domains = len(domains)
+        self.domains_ignore_labels = domains_ignore_labels
         self.domains_not_ignore_labels = list(set(domains) - set(domains_ignore_labels))
         self.image_size = image_size
         self.channels = channels
@@ -44,14 +45,14 @@ class Preprocessor():
             'domain': y_test_domain
             }
 
-        x_train_unlabelled = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains]])
-        y_train_unlabelled = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains]])
+        x_train_unlabelled = self.concatenate([x for x in [self.x_train_dict[key] for key in self.domains_ignore_labels]])
+        y_train_unlabelled = self.concatenate([y for y in [self.y_train_domain_dict[key] for key in self.domains_ignore_labels]])
         y_train_unlabelled = {
             'domain': y_train_unlabelled
         }
 
-        x_test_unlabelled = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains]])
-        y_test_unlabelled = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains]])
+        x_test_unlabelled = self.concatenate([x for x in [self.x_test_dict[key] for key in self.domains_ignore_labels]])
+        y_test_unlabelled = self.concatenate([y for y in [self.y_test_domain_dict[key] for key in self.domains_ignore_labels]])
         y_test_unlabelled = {
             'domain': y_test_unlabelled
         }

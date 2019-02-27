@@ -14,7 +14,7 @@ DOMAINS_IGNORE_LABELS = [
 ]
 
 EPOCHS = 200
-SUBSET = None
+SUBSET = 20000
 MODEL_NAME = 'cnn_train_svhn.h5'
 LOG_FILE = 'logs/cnn_train_svhn.log'
 
