@@ -1,4 +1,4 @@
-CONFIG = 'DEBUG'
+CONFIG = 'PROD'
 
 BATCH_SIZE = 32
 NUM_CLASSES = 10
@@ -14,12 +14,12 @@ DOMAINS_IGNORE_LABELS = [
 ]
 
 EPOCHS = 200
-SUBSET = 10000
-MODEL_NAME = 'cnn_grl_train_svhn.h5'
-LOG_FILE = 'logs/cnn_grl_train_svhn.log'
+SUBSET = None
+MODEL_NAME = 'cnn_train_svhn.h5'
+LOG_FILE = 'logs/cnn_train_svhn.log'
 
 if CONFIG == 'DEBUG':
-    EPOCHS = 10
+    EPOCHS = 1000
     SUBSET = 10
     MODEL_NAME = 'debug.h5'
     LOG_FILE = 'logs/debug.log'
