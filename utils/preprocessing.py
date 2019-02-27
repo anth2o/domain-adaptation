@@ -57,6 +57,28 @@ class Preprocessor():
             'domain': y_test_unlabelled
         }
 
+        print('In labelled data: {}'.format(self.domains_not_ignore_labels))
+
+        print('x_train: {}'.format(x_train.shape))
+        print('y_train_label: {}'.format(y_train_label.shape))
+        print('y_train_domain: {}'.format(y_train_domain.shape))
+
+        print('x_test: {}'.format(x_test.shape))
+        print('y_test_label: {}'.format(y_test_label.shape))
+        print('y_test_domain: {}'.format(y_test_domain.shape))
+
+        print('')
+
+        print('In unlabelled data: {}'.format(self.domains_ignore_labels))
+
+        print('x_train_unlabelled: {}'.format(x_train_unlabelled.shape))
+        print('y_train_unlabelled: {}'.format(y_train_unlabelled['domain'].shape))
+
+        print('x_test_unlabelled: {}'.format(x_test_unlabelled.shape))
+        print('y_test_unlabelled: {}'.format(y_test_unlabelled['domain'].shape))
+
+        print('')
+
         return ((x_train, y_train), (x_test, y_test)), ((x_train_unlabelled, y_test_unlabelled), (x_test_unlabelled, y_test_unlabelled))
 
     def get_dict_data(self):
@@ -103,10 +125,6 @@ class Preprocessor():
             y_train_label = y_train_label[:self.subset]
             x_test = x_test[:self.subset]
             y_test_label = y_test_label[:self.subset]   
-
-        print('x_train {} shape: {}'.format(domain, x_train.shape))
-        print(x_train.shape[0], 'train samples')
-        print(x_test.shape[0], 'test samples')
 
         x_train = self.process_x(x_train)
         x_test = self.process_x(x_test)

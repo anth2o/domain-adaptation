@@ -32,10 +32,10 @@ class CNNGRL(BaseModel):
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = Dropout(0.25)(x)
 
+        x = Flatten()(x)
         x = Dense(512, activation='relu')(x)
-        x = Dropout(0.5)(x)
+        features = Dropout(0.5)(x)
 
-        features = Flatten()(x)
         return inputs, features
 
     def _build_label_predictor(self, features, num_classes):
