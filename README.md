@@ -22,7 +22,7 @@ Change model name in train.py (CNN or CNNGRL)
 python train.py
 ```
 
-# Load weights and evaluate models
+## Load weights and evaluate models
 
 ```bash
 python evaluate.py
