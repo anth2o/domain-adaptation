@@ -30,7 +30,14 @@ python evaluate.py
 
 ## Results
     
+<<<<<<< HEAD
 | Network       | Source (accuracy)       | Target (accuracy) |
 | ------------- |:-------------:| -----:|
 | CNN           | SVHN (0.91)   | MNIST (0.60) |
 | CNN-GRL       | SVHN          | MNIST |
+=======
+| Network       | Source (accuracy)        | Target (accuracy)|
+| ------------- |:-------------:| -----:|
+| CNN           | SVHN (0.91)       | MNIST (0.11) |
+| CNN-GRL       | SVHN (0.89)         | MNIST (0.56) |
+>>>>>>> 37879dd4d30315bff289ce349e1695824824b59f
