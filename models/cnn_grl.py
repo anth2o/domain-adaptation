@@ -10,9 +10,8 @@ from utils.config import *
 from utils.generator import Generator
 
 class CNNGRL(BaseModel):     
-    def __init__(self, image_size=IMAGE_SIZE, channels=CHANNELS, grl_lambda=0.3):
+    def __init__(self, image_size=IMAGE_SIZE, channels=CHANNELS):
         super(CNNGRL, self).__init__()
-        self.grl_lambda = grl_lambda
         self.loss = {'domain_classifier': 'categorical_crossentropy', 'label_predictor': 'categorical_crossentropy'}
         self.loss_weights = {'domain_classifier': 1, 'label_predictor': 1}
         self.input_shape = image_size + (channels,)
@@ -21,9 +20,9 @@ class CNNGRL(BaseModel):
         inputs, features = self._build_feature_extractor()
         feature_extractor = Model(inputs=inputs, outputs=features)
         inputs_label, label_predictions = self._build_label_predictor(feature_extractor, num_classes)
-        inputs_domain, domain_predictions = self._build_domain_classifier(feature_extractor, num_domains)
+        inputs_domain, input_lambda, domain_predictions = self._build_domain_classifier(feature_extractor, num_domains)
         self.model_label = Model(inputs=inputs_label, outputs=label_predictions)
-        self.model = Model(inputs=[inputs_label, inputs_domain], outputs=[label_predictions, domain_predictions])
+        self.model = Model(inputs=[inputs_label, inputs_domain, input_lambda], outputs=[label_predictions, domain_predictions])
 
     def _build_feature_extractor(self):
         inputs = Input(shape=self.input_shape)
@@ -55,13 +54,14 @@ class CNNGRL(BaseModel):
 
     def _build_domain_classifier(self, feature_extractor, num_domains):
         inputs_domain = Input(shape=self.input_shape)
+        input_lambda = Input(shape=(1,))
         x = feature_extractor(inputs_domain)
-        x = GRL(self.grl_lambda)(x)
+        x = GRL()([x, input_lambda])
         x = Dense(512, activation='relu')(x)
         x = Dense(32, activation='relu')(x)
         outputs = Dense(num_domains, activation='softmax',
                         name='domain_classifier')(x)
-        return inputs_domain, outputs
+        return inputs_domain, input_lambda, outputs
 
     def _compile(self):
         if not self.model:
@@ -75,8 +75,8 @@ class CNNGRL(BaseModel):
         reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         reduce_lr_domain = ReduceLROnPlateau(monitor='val_domain_classifier_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         csv_logger = CSVLogger(log_file)
-        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size)
-        test_datagen = Generator(x_test, y_test, x_test_unlabelled, y_test_unlabelled, batch_size)
+        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size, print_lambda=True)
+        test_datagen = Generator(x_test, y_test, x_test_unlabelled, y_test_unlabelled, batch_size, print_lambda=False)
         self.model.fit_generator(train_datagen,
             epochs=epochs,
             shuffle=False,
