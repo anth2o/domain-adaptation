@@ -9,8 +9,10 @@ class GRL(Layer):
         super(GRL, self).build(input_shape)
 
     def call(self, inputs):
-        x, _lambda = inputs
+        x, input_lambda = inputs
         grad_name = 'GRL-' + str(uuid4())
+
+        _lambda = input_lambda[0][0]
 
         @tf.RegisterGradient(grad_name)
         def _flip_gradients(op, grad):
