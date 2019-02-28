@@ -23,6 +23,10 @@ CNN_LOG_FILE = 'logs/cnn_train_svhn.log'
 
 if CONFIG == 'DEBUG':
     EPOCHS = 10
-    SUBSET = 50
+    SUBSET = 1000
     MODEL_NAME = 'debug.h5'
     LOG_FILE = 'logs/debug.log'
+    CNN_GRL_MODEL_NAME = MODEL_NAME
+    CNN_GRL_LOG_FILE = LOG_FILE
+    CNN_MODEL_NAME = MODEL_NAME
+    CNN_LOG_FILE = LOG_FILE
