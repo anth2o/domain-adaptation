@@ -7,10 +7,12 @@ import numpy as np
 from .base_model import BaseModel
 from layers.grl import GRL
 from utils.config import *
+from utils.generator import Generator
 
 class CNNGRL(BaseModel):     
-    def __init__(self, image_size=IMAGE_SIZE, channels=CHANNELS):
+    def __init__(self, image_size=IMAGE_SIZE, channels=CHANNELS, grl_lambda=0.5):
         super(CNNGRL, self).__init__()
+        self.grl_lambda = grl_lambda
         self.loss = {'domain_classifier': 'categorical_crossentropy', 'label_predictor': 'categorical_crossentropy'}
         self.input_shape = image_size + (channels,)
 
@@ -43,6 +45,7 @@ class CNNGRL(BaseModel):
     def _build_label_predictor(self, feature_extractor, num_classes):
         inputs_label = Input(shape=self.input_shape)
         x = feature_extractor(inputs_label)
+        x = Dense(512, activation='relu')(x)
         x = Dense(32, activation='relu')(x)
         outputs = Dense(num_classes, activation='softmax',
                         name='label_predictor')(x)
@@ -51,7 +54,8 @@ class CNNGRL(BaseModel):
     def _build_domain_classifier(self, feature_extractor, num_domains):
         inputs_domain = Input(shape=self.input_shape)
         x = feature_extractor(inputs_domain)
-        x = GRL(0.01)(x)
+        x = GRL(self.grl_lambda)(x)
+        x = Dense(512, activation='relu')(x)
         x = Dense(32, activation='relu')(x)
         outputs = Dense(num_domains, activation='softmax',
                         name='domain_classifier')(x)
@@ -66,24 +70,16 @@ class CNNGRL(BaseModel):
     def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE):
         if not self.model:
             raise Exception("Trying to fit model but it isn't built")
-        # early_stopping = EarlyStopping(monitor='val_loss', min_delta=10e-4, patience=10, restore_best_weights=True, verbose=1)
-        # reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=10e-7, verbose=1)
-        # csv_logger = CSVLogger(log_file)
-        x_train_unlabelled = np.concatenate([x_train_unlabelled, x_train], axis=0)
-        y_train_unlabelled = np.concatenate([y_train_unlabelled['domain'], y_train['domain']], axis=0)
-        assert x_train_unlabelled.shape[0] == y_train_unlabelled.shape[0]
-        p = np.random.permutation(x_train_unlabelled.shape[0])
-        x_train_unlabelled = x_train_unlabelled[p][:x_train.shape[0]]
-        y_train_unlabelled = y_train_unlabelled[p][:y_train['domain'].shape[0]]
-        self.model.fit([x_train, x_train_unlabelled],
-            [y_train['label'], y_train_unlabelled],
-            batch_size=batch_size,
+        reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=5, min_lr=10e-8, verbose=1)
+        reduce_lr_domain = ReduceLROnPlateau(monitor='val_domain_classifier_loss', factor=0.2, patience=5, min_lr=10e-8, verbose=1)
+        csv_logger = CSVLogger(log_file)
+        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size)
+        test_datagen = Generator(x_test, y_test, x_test_unlabelled, y_test_unlabelled, batch_size)
+        self.model.fit_generator(train_datagen,
             epochs=epochs,
-            # validation_data=(
-            #     [x_test, np.concatenate([x_test_unlabelled, x_test], axis=0)],
-            #     [y_test['label'], np.concatenate([y_test_unlabelled['domain'], y_test['domain']], axis=0)]
-            #     ),
-            shuffle=True
+            shuffle=False,
+            validation_data=test_datagen,
+            callbacks=[reduce_lr_label, reduce_lr_domain, csv_logger]
             )
         print(self.model.weights[1:4] == self.model_label.weights[1:4])
 

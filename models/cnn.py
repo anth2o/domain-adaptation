@@ -19,6 +19,7 @@ class CNN(BaseModel):
         x = Flatten()(x)
         x = Dense(512, activation='relu')(x)
         x = Dropout(0.5)(x)
+        x = Dense(512, activation='relu')(x)
         x = Dense(32, activation='relu')(x)
         predictions = Dense(num_classes, activation='softmax')(x)
 
