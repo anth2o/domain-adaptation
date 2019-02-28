@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from keras.utils import Sequence
+import matplotlib.pyplot as plt
 
 class Generator(Sequence):
     def __init__(self, x, y, x_unlabelled, y_unlabelled, batch_size=32):
@@ -28,3 +29,4 @@ class Generator(Sequence):
     
     def on_epoch_end(self):
         np.random.shuffle(self.indices)
+        np.random.shuffle(self.indices_unlabelled)

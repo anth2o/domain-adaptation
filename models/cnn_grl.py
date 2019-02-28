@@ -10,10 +10,11 @@ from utils.config import *
 from utils.generator import Generator
 
 class CNNGRL(BaseModel):     
-    def __init__(self, image_size=IMAGE_SIZE, channels=CHANNELS, grl_lambda=0.5):
+    def __init__(self, image_size=IMAGE_SIZE, channels=CHANNELS, grl_lambda=0.3):
         super(CNNGRL, self).__init__()
         self.grl_lambda = grl_lambda
         self.loss = {'domain_classifier': 'categorical_crossentropy', 'label_predictor': 'categorical_crossentropy'}
+        self.loss_weights = {'domain_classifier': 1, 'label_predictor': 1}
         self.input_shape = image_size + (channels,)
 
     def _build(self, num_classes=NUM_CLASSES, num_domains=len(DOMAINS)):
@@ -37,8 +38,7 @@ class CNNGRL(BaseModel):
         x = Dropout(0.25)(x)
 
         x = Flatten()(x)
-        x = Dense(512, activation='relu')(x)
-        features = Dropout(0.5)(x)
+        features = Dense(512, activation='relu')(x)
 
         return inputs, features
 
@@ -46,7 +46,9 @@ class CNNGRL(BaseModel):
         inputs_label = Input(shape=self.input_shape)
         x = feature_extractor(inputs_label)
         x = Dense(512, activation='relu')(x)
+        x = Dropout(0.25)(x)
         x = Dense(32, activation='relu')(x)
+        x = Dropout(0.25)(x)
         outputs = Dense(num_classes, activation='softmax',
                         name='label_predictor')(x)
         return inputs_label, outputs
@@ -65,13 +67,13 @@ class CNNGRL(BaseModel):
         if not self.model:
             raise Exception("Trying to compile model but it isn't built")
         self.model_label.compile(loss=self.loss['label_predictor'], optimizer=self.opt, metrics=['accuracy'])
-        self.model.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'])
+        self.model.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'], loss_weights=self.loss_weights)
 
     def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE):
         if not self.model:
             raise Exception("Trying to fit model but it isn't built")
-        reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=5, min_lr=10e-8, verbose=1)
-        reduce_lr_domain = ReduceLROnPlateau(monitor='val_domain_classifier_loss', factor=0.2, patience=5, min_lr=10e-8, verbose=1)
+        reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
+        reduce_lr_domain = ReduceLROnPlateau(monitor='val_domain_classifier_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         csv_logger = CSVLogger(log_file)
         train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size)
         test_datagen = Generator(x_test, y_test, x_test_unlabelled, y_test_unlabelled, batch_size)
@@ -79,7 +81,7 @@ class CNNGRL(BaseModel):
             epochs=epochs,
             shuffle=False,
             validation_data=test_datagen,
-            callbacks=[reduce_lr_label, reduce_lr_domain, csv_logger]
+            callbacks=[csv_logger]
             )
         print(self.model.weights[1:4] == self.model_label.weights[1:4])
 

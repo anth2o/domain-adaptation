@@ -2,7 +2,7 @@ import keras
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, Input
 from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, CSVLogger
-from keras.optimizers import rmsprop, SGD
+from keras.optimizers import Adam, SGD
 import os
 from utils.config import *
 
@@ -10,7 +10,7 @@ class BaseModel():
     def __init__(self, loss='categorical_crossentropy'):
         self.model = None
         self.loss = loss
-        self.opt = SGD(lr=10e-3, momentum=0.9, decay=1e-6)
+        self.opt = SGD(lr=10e-3, momentum=0.9, decay=1e-5)
 
     def _build(self, num_classes=NUM_CLASSES):
         inputs = Input(shape=(32, 32, 3))

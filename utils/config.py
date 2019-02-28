@@ -1,4 +1,4 @@
-CONFIG = 'DEBUG'
+CONFIG = 'PROD'
 
 BATCH_SIZE = 32
 NUM_CLASSES = 10
@@ -13,11 +13,11 @@ DOMAINS_IGNORE_LABELS = [
     'mnist'
 ]
 
-EPOCHS = 200
-SUBSET = None
+EPOCHS = 500
+SUBSET = 100
 
-CNN_GRL_MODEL_NAME = 'cnn_grl_train_svhn.h5'
-CNN_GRL_LOG_FILE = 'logs/cnn_grl_train_svhn.log'
+CNN_GRL_MODEL_NAME = 'cnn_grl_merge_train_svhn.h5'
+CNN_GRL_LOG_FILE = 'logs/cnn_grl_merge_train_svhn.log'
 CNN_MODEL_NAME = 'cnn_train_svhn.h5'
 CNN_LOG_FILE = 'logs/cnn_train_svhn.log'
 
