@@ -15,4 +15,4 @@ if architecture == 'CNN':
     model._run_all(x_train, x_test, y_train['label'], y_test['label'])
 elif architecture == 'CNNGRL':
     model = CNNGRL()
-    model._run_all(x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled)
+    model._run_all(x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, 'weights/cnn_train_svhn.h5')
