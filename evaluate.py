@@ -9,8 +9,8 @@ pp = Preprocessor(subset=None)
 
 
 path_to_model = {
-    'weights/cnn_grl_train_svhn.h5': CNNGRL,
-    'weights/cnn_train_svhn.h5': CNN
+    'weights/cnn_train_svhn.h5': CNN,
+    'weights/cnn_grl_merge_train_svhn.h5': CNNGRL,
 }
 for path, model_class in path_to_model.items():
     try:
