@@ -40,7 +40,7 @@ class Generator(Sequence):
         self.compute_lambda()
 
     def compute_lambda(self):
-        self._lambda = 2.0 / (1 + np.exp(-self.gamma * self.epochs / self.max_epochs)) - 1
+        self._lambda = 2.0 / (1 + np.exp(-self.gamma * self.epochs)) - 1
         if self.print_lambda:
             print('')
             print('Lambda value: ' + str(self._lambda))
