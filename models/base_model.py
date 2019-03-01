@@ -10,7 +10,7 @@ class BaseModel():
     def __init__(self, loss='categorical_crossentropy'):
         self.model = None
         self.loss = loss
-        self.opt = SGD(lr=10e-3, momentum=0.9, decay=1e-5)
+        self.opt = SGD(lr=1e-5, momentum=0.9)
 
     def _build(self, num_classes=NUM_CLASSES):
         inputs = Input(shape=(32, 32, 3))

@@ -12,7 +12,7 @@ class Generator(Sequence):
         self.batch_size = batch_size
         self.indices = np.arange(self.x.shape[0])
         self.epochs = 0
-        self.gamma = 1e-2
+        self.gamma = 1e-5
         self.print_lambda = print_lambda
         self.compute_lambda()
         np.random.shuffle(self.indices)
@@ -41,4 +41,5 @@ class Generator(Sequence):
     def compute_lambda(self):
         self._lambda = 2.0 / (1 + np.exp(-self.gamma * self.epochs)) - 1
         if self.print_lambda:
+            print('')
             print('Lambda value: ' + str(self._lambda))

@@ -75,7 +75,7 @@ class CNNGRL(BaseModel):
         reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         reduce_lr_domain = ReduceLROnPlateau(monitor='val_domain_classifier_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         csv_logger = CSVLogger(log_file)
-        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size, print_lambda=True)
+        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size, print_lambda=False)
         test_datagen = Generator(x_test, y_test, x_test_unlabelled, y_test_unlabelled, batch_size, print_lambda=False)
         self.model.fit_generator(train_datagen,
             epochs=epochs,

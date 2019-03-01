@@ -13,8 +13,8 @@ DOMAINS_IGNORE_LABELS = [
     'mnist'
 ]
 
-EPOCHS = 500
-SUBSET = 100
+EPOCHS = 1000
+SUBSET = 10000
 
 CNN_GRL_MODEL_NAME = 'cnn_grl_merge_train_svhn.h5'
 CNN_GRL_LOG_FILE = 'logs/cnn_grl_merge_train_svhn.log'
