@@ -12,7 +12,7 @@ class Generator(Sequence):
         self.batch_size = batch_size
         self.indices = np.arange(self.x.shape[0])
         self.epochs = 0
-        self.gamma = 1e-4
+        self.gamma = 1e-5
         self.print_lambda = print_lambda
         self.compute_lambda()
         np.random.shuffle(self.indices)
