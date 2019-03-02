@@ -91,12 +91,12 @@ class CNNGRL(BaseModel):
         model_path = os.path.join(save_dir, model_name)
         if not os.path.isdir(model_path):
             os.makedirs(model_path)
-        for layer in self.feature_extractor.layers:
-            layer.trainable = True
+        self._unfreeze_layers()
         self.feature_extractor.save(model_path + '/feature_extractor.h5')
         self.model.save(model_path + '/model.h5')
         print('Saved trained model at %s ' % model_path)
-
+        self._freeze_layers()
+        
     def _evaluate(self, x_test, y_test):
         if not self.model:
             raise Exception("Trying to evaluate model but it isn't built")
@@ -123,8 +123,7 @@ class CNNGRL(BaseModel):
                 self._freeze_layers()
 
     def _load_weights(self, model_name):
-        for layer in self.feature_extractor.layers:
-            layer.trainable = True
+        self._unfreeze_layers()
         self.feature_extractor.load_weights('weights/' + model_name + '/feature_extractor.h5', by_name=True)
         self.model.load_weights('weights/' + model_name + '/model.h5', by_name=True)
         self._freeze_layers()
@@ -134,4 +133,8 @@ class CNNGRL(BaseModel):
             if verbose:
                 print('Freeze layer: ' + str(layer.name))
             layer.trainable=False
+
+    def _unfreeze_layers(self):
+        for layer in self.feature_extractor.layers:
+            layer.trainable = True
 

@@ -2,6 +2,7 @@ env
 data
 .vscode
 __pycache__
+*.pyc
 .DS_STORE
 debug.h5
 debug.log
