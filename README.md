@@ -14,6 +14,10 @@ pip install -r requirements.txt
 python utils/download_data.py
 ```
 
+## Configuration
+
+All the configuration variables are in the file utils/config.py
+
 ## Train a specific model
 
 Change model name in train.py (CNN or CNNGRL)
