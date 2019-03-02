@@ -25,3 +25,7 @@ class GRL(Layer):
 
     def compute_output_shape(self, input_shape):
         return input_shape
+
+    def get_config(self):
+        base_config = super(GRL, self).get_config()
+        return dict(list(base_config.items()))

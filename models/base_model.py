@@ -59,11 +59,11 @@ class BaseModel():
         self._save(save_dir=save_dir, model_name=model_name)
         self._evaluate(x_test, y_test)
 
-    def _load_weights(self, path):
-        self.model.load_weights(path)
+    def _load_weights(self, model_name):
+        self.model.load_weights('weights/' + model_name + '.h5')
 
-    def _load_and_evaluate(self, path, x_test, y_test, num_classes=NUM_CLASSES):
+    def _load_and_evaluate(self, model_name, x_test, y_test, num_classes=NUM_CLASSES):
         self._build(num_classes)
         self._compile()
-        self._load_weights(path)
+        self._load_weights(model_name)
         self._evaluate(x_test, y_test)

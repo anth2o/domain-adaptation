@@ -27,17 +27,17 @@ class CNNGRL(BaseModel):
 
     def _build_feature_extractor(self):
         inputs = Input(shape=self.input_shape)
-        x = Conv2D(32, (3, 3), padding='same', activation='relu')(inputs)
-        x = Conv2D(32, (3, 3), activation='relu')(x)
-        x = MaxPooling2D(pool_size=(2, 2))(x)
-        x = Dropout(0.25)(x)
+        x = Conv2D(32, (3, 3), padding='same', activation='relu', name='conv2d_1')(inputs)
+        x = Conv2D(32, (3, 3), activation='relu', name='conv2d_2')(x)
+        x = MaxPooling2D(pool_size=(2, 2), name='max_pooling2d_1')(x)
+        x = Dropout(0.25, name='dropout_1')(x)
 
-        x = Conv2D(64, (3, 3), padding='same', activation='relu')(x)
-        x = Conv2D(64, (3, 3), activation='relu')(x)
-        x = MaxPooling2D(pool_size=(2, 2))(x)
-        x = Dropout(0.25)(x)
+        x = Conv2D(64, (3, 3), padding='same', activation='relu', name='conv2d_3')(x)
+        x = Conv2D(64, (3, 3), activation='relu', name='conv2d_4')(x)
+        x = MaxPooling2D(pool_size=(2, 2), name='max_pooling2d_2')(x)
+        x = Dropout(0.25, name='dropout_2')(x)
 
-        x = Flatten()(x)
+        x = Flatten(name='flatten_1')(x)
         features = Dense(512, activation='relu', name='dense_1')(x)
 
         return inputs, features
@@ -45,8 +45,8 @@ class CNNGRL(BaseModel):
     def _build_label_predictor(self, num_classes):
         inputs_label = Input(shape=self.input_shape)
         x = self.feature_extractor(inputs_label)
-        x = Dropout(0.5)(x)
-        x = Dense(32, activation='relu', name='dense_2')(x)
+        x = Dropout(0.5, name='dropout_label_1')(x)
+        x = Dense(32, activation='relu', name='dense_label_1')(x)
         outputs = Dense(num_classes, activation='softmax',
                         name='label_predictor')(x)
         return inputs_label, outputs
@@ -56,8 +56,8 @@ class CNNGRL(BaseModel):
         input_lambda = Input(shape=(1,))
         x = self.feature_extractor(inputs_domain)
         x = GRL()([x, input_lambda])
-        x = Dense(512, activation='relu', name='dense_4')(x)
-        x = Dense(32, activation='relu', name='dense_5')(x)
+        x = Dense(512, activation='relu', name='dense_domain_1')(x)
+        x = Dense(32, activation='relu', name='dense_domain_2')(x)
         outputs = Dense(num_domains, activation='softmax',
                         name='domain_classifier')(x)
         return inputs_domain, input_lambda, outputs
@@ -74,7 +74,7 @@ class CNNGRL(BaseModel):
         reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         reduce_lr_domain = ReduceLROnPlateau(monitor='val_domain_classifier_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
         csv_logger = CSVLogger(log_file)
-        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size=batch_size, max_epochs=epochs, print_lambda=True)
+        train_datagen = Generator(x_train, y_train, x_train_unlabelled, y_train_unlabelled, batch_size=batch_size, max_epochs=epochs, print_lambda=False)
         test_datagen = Generator(x_test, y_test, x_test_unlabelled, y_test_unlabelled, batch_size=batch_size, max_epochs=epochs, print_lambda=False)
         self.model.fit_generator(train_datagen,
             epochs=epochs,
@@ -83,21 +83,29 @@ class CNNGRL(BaseModel):
             callbacks=[csv_logger]
             )
 
+    def _save(self, save_dir=SAVE_DIR, model_name=CNN_MODEL_NAME):
+        if not self.model:
+            raise Exception("Trying to save model but it isn't built")
+        if not os.path.isdir(save_dir):
+            os.makedirs(save_dir)
+        model_path = os.path.join(save_dir, model_name)
+        if not os.path.isdir(model_path):
+            os.makedirs(model_path)
+        for layer in self.feature_extractor.layers:
+            layer.trainable = True
+        self.feature_extractor.save(model_path + '/feature_extractor.h5')
+        self.model.save(model_path + '/model.h5')
+        print('Saved trained model at %s ' % model_path)
+
     def _evaluate(self, x_test, y_test):
         if not self.model:
             raise Exception("Trying to evaluate model but it isn't built")
         scores = self.model_label.evaluate(x_test, y_test, verbose=0)
         print('Test accuracy:', scores[1])
 
-    def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, model_path=None, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE, save_dir=SAVE_DIR, model_name=CNN_GRL_MODEL_NAME):
+    def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE, save_dir=SAVE_DIR, model_name=CNN_GRL_MODEL_NAME, pre_trained_model_name=CNN_MODEL_NAME):
         self._build(num_classes=num_classes)
-        if model_path is not None:
-            if os.path.isfile(model_path):
-                print('Loading weights from: ' + model_path)
-                self.feature_extractor.load_weights(model_path, by_name=True)
-                for layer in self.feature_extractor.layers[2:-2]:
-                    print('Freeze layer: ' + str(layer.name))
-                    layer.trainable=False
+        self._load_pre_trained_weights(pre_trained_model_name)
         print(self.model.summary())
         print(self.feature_extractor.summary())
         self._compile()
@@ -105,3 +113,25 @@ class CNNGRL(BaseModel):
                   x_test_unlabelled, y_test_unlabelled, batch_size=batch_size, epochs=epochs, log_file=log_file)
         self._save(save_dir=save_dir, model_name=model_name)
         self._evaluate(x_test, y_test['label'])       
+
+    def _load_pre_trained_weights(self, pre_trained_model_name):
+        pre_trained_model_path = 'weights/' + pre_trained_model_name + '.h5'
+        if pre_trained_model_path is not None:
+            if os.path.isfile(pre_trained_model_path):
+                print('Loading weights from: ' + pre_trained_model_path)
+                self.feature_extractor.load_weights(pre_trained_model_path, by_name=True)
+                self._freeze_layers()
+
+    def _load_weights(self, model_name):
+        for layer in self.feature_extractor.layers:
+            layer.trainable = True
+        self.feature_extractor.load_weights('weights/' + model_name + '/feature_extractor.h5', by_name=True)
+        self.model.load_weights('weights/' + model_name + '/model.h5', by_name=True)
+        self._freeze_layers()
+
+    def _freeze_layers(self, verbose=False):
+        for layer in self.feature_extractor.layers[2:-2]:
+            if verbose:
+                print('Freeze layer: ' + str(layer.name))
+            layer.trainable=False
+

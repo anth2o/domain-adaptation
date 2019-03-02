@@ -9,9 +9,12 @@ pp = Preprocessor(subset=None)
 
 
 path_to_model = {
-    'weights/cnn_train_svhn.h5': CNN,
-    'weights/cnn_grl_merge_train_svhn.h5': CNNGRL,
+    CNN_GRL_MODEL_NAME: CNNGRL,
+    CNN_MODEL_NAME: CNN,
 }
+if CONFIG == 'DEBUG':
+    path_to_model[MODEL_NAME] = CNNGRL
+
 for path, model_class in path_to_model.items():
     try:
         model = model_class()
