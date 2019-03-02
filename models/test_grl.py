@@ -11,13 +11,13 @@ class TestGRL(BaseModel):
         self.loss = 'mae'
         self.lr = 0.1
         self.opt = SGD(lr=self.lr)
-        self._lambda = 0.5
 
     def _build(self):
-        inputs = Input(shape=(1,))
-        x = Dense(1, use_bias=False)(inputs)
-        predictions = GRL(_lambda=self._lambda)(x)
-        self.model = Model(inputs=inputs, outputs=predictions)
+        inputs_x = Input(shape=(1,))
+        inputs_lambda = Input(shape=(1,))
+        x = Dense(1, use_bias=False)(inputs_x)
+        predictions = GRL()([x, inputs_lambda])
+        self.model = Model(inputs=[inputs_x, inputs_lambda], outputs=predictions)
 
     def _fit(self, x_train, y_train, epochs=1):
         if not self.model:
