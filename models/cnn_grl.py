@@ -2,6 +2,7 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, Input, C
 from keras.models import Model
 from keras.optimizers import rmsprop
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, CSVLogger
+from keras.utils import plot_model
 import numpy as np
 import os
 
@@ -96,7 +97,7 @@ class CNNGRL(BaseModel):
         self.model.save(model_path + '/model.h5')
         print('Saved trained model at %s ' % model_path)
         self._freeze_layers()
-        
+
     def _evaluate(self, x_test, y_test):
         if not self.model:
             raise Exception("Trying to evaluate model but it isn't built")
@@ -112,7 +113,7 @@ class CNNGRL(BaseModel):
         self._fit(x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled,
                   x_test_unlabelled, y_test_unlabelled, batch_size=batch_size, epochs=epochs, log_file=log_file)
         self._save(save_dir=save_dir, model_name=model_name)
-        self._evaluate(x_test, y_test['label'])       
+        self._evaluate(x_test, y_test['label'])    
 
     def _load_pre_trained_weights(self, pre_trained_model_name):
         pre_trained_model_path = 'weights/' + pre_trained_model_name + '.h5'
@@ -137,4 +138,8 @@ class CNNGRL(BaseModel):
     def _unfreeze_layers(self):
         for layer in self.feature_extractor.layers:
             layer.trainable = True
+
+    def _plot_model(self, model_name):
+        plot_model(self.model, to_file='img/' + model_name + '/model.png')
+        plot_model(self.feature_extractor, to_file='img/' + model_name + '/feature_extratcor.png')
 

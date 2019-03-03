@@ -32,11 +32,12 @@ python train.py
 python evaluate.py
 ```
 
+
 ## Results
     
 | Network       | Source (accuracy) | Target (accuracy) |
 | ------------- |:-----------------:| -----------------:|
 | CNN           | SVHN (0.91)       | MNIST (0.60)      |
-| CNN           | MNIST             | SVHN        |
-| CNN-GRL       | SVHN        | MNIST      |
+| CNN           | MNIST          | SVHN        |
+| CNN-GRL       | SVHN  (0.88)      | MNIST (0.71)      |
 | CNN-GRL       | MNIST        | SVHN      |

@@ -2,3 +2,4 @@ keras
 tensorflow
 matplotlib
 scikit-image
+pydot

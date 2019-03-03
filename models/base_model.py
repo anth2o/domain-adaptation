@@ -3,6 +3,7 @@ from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, Input
 from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, CSVLogger
 from keras.optimizers import Adam, SGD
+from keras.utils import plot_model
 import os
 from utils.config import *
 
@@ -67,3 +68,6 @@ class BaseModel():
         self._compile()
         self._load_weights(model_name)
         self._evaluate(x_test, y_test)
+
+    def _plot_model(self, model_name):
+        plot_model(self.model, to_file='img/' + model_name + '.png')
