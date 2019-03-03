@@ -3,3 +3,4 @@ tensorflow
 matplotlib
 scikit-image
 pydot
+scikit-learn

@@ -6,3 +6,5 @@ __pycache__
 .DS_STORE
 debug.h5
 debug.log
+debug/
+*.ipynb
