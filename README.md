@@ -22,7 +22,6 @@ python utils/download_data.py
 ## Configuration
 
 All the configuration variables are in the file utils/config.py.  
-Make sure config to PROD to train and evaluate the whole architecture on (almost) all the dataset.
 
 ## Train a specific model
 
