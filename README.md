@@ -63,7 +63,7 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
 | CNN-GRL       | MNIST (0.982)     | SVHN (0.238)      |
 
 
-[cnn]: img/cnn.png "CNN architecture"
-[cnn_grl_model]: img/cnn_grl/model.png "CNN-GRL architecture"
-[cnn_grl_fe]: img/cnn_grl/feature_extractor.png "CNN-GRL architecture"
+[cnn]: img/model_architecture/cnn.png "CNN architecture"
+[cnn_grl_model]: img/model_architecture/cnn_grl/model.png "CNN-GRL architecture"
+[cnn_grl_fe]: img/model_architecture/cnn_grl/feature_extractor.png "CNN-GRL architecture"
 [Unsupervised Domain Adaptation by Backpropagation]: https://arxiv.org/pdf/1409.7495.pdf
