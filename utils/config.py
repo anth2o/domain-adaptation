@@ -16,7 +16,7 @@ DOMAINS_IGNORE_LABELS = [
 EPOCHS = 500
 SUBSET = 10000
 
-CNN_GRL_MODEL_NAME = 'cnn_grl_merge_train_svhn_2'
+CNN_GRL_MODEL_NAME = 'cnn_grl_merge_train_svhn'
 CNN_GRL_LOG_FILE = 'logs/' + CNN_GRL_MODEL_NAME + '.log'
 CNN_MODEL_NAME = 'cnn_train_svhn'
 CNN_LOG_FILE = 'logs/' + CNN_GRL_MODEL_NAME + '.log'

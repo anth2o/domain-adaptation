@@ -20,7 +20,7 @@ class CNNGRL(BaseModel):
 
     def _build(self, num_classes=NUM_CLASSES, num_domains=len(DOMAINS)):
         inputs, features = self._build_feature_extractor()
-        self.feature_extractor = Model(inputs=inputs, outputs=features)
+        self.feature_extractor = Model(inputs=inputs, outputs=features, name='feature_extractor')
         inputs_label, label_predictions = self._build_label_predictor(num_classes)
         inputs_domain, input_lambda, domain_predictions = self._build_domain_classifier(num_domains)
         self.model_label = Model(inputs=inputs_label, outputs=label_predictions)
@@ -44,7 +44,7 @@ class CNNGRL(BaseModel):
         return inputs, features
 
     def _build_label_predictor(self, num_classes):
-        inputs_label = Input(shape=self.input_shape)
+        inputs_label = Input(shape=self.input_shape, name='input_labels')
         x = self.feature_extractor(inputs_label)
         x = Dropout(0.5, name='dropout_label_1')(x)
         x = Dense(32, activation='relu', name='dense_label_1')(x)
@@ -53,8 +53,8 @@ class CNNGRL(BaseModel):
         return inputs_label, outputs
 
     def _build_domain_classifier(self, num_domains):
-        inputs_domain = Input(shape=self.input_shape)
-        input_lambda = Input(shape=(1,))
+        inputs_domain = Input(shape=self.input_shape, name='input_domains')
+        input_lambda = Input(shape=(1,), name='input_lambda')
         x = self.feature_extractor(inputs_domain)
         x = GRL()([x, input_lambda])
         x = Dense(512, activation='relu', name='dense_domain_1')(x)
@@ -139,7 +139,11 @@ class CNNGRL(BaseModel):
         for layer in self.feature_extractor.layers:
             layer.trainable = True
 
-    def _plot_model(self, model_name):
-        plot_model(self.model, to_file='img/' + model_name + '/model.png')
-        plot_model(self.feature_extractor, to_file='img/' + model_name + '/feature_extratcor.png')
+    def _plot_model(self):
+        model_name = 'cnn_grl'
+        model_path = 'img/' + model_name
+        if not os.path.isdir(model_path):
+            os.makedirs(model_path)
+        plot_model(self.model, to_file=model_path + '/model.png', show_layer_names=True, show_shapes=True)
+        plot_model(self.feature_extractor, to_file=model_path + '/feature_extractor.png', show_layer_names=True, show_shapes=True)
 
