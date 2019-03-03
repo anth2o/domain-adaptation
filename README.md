@@ -46,8 +46,8 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
 ## Hyperparameters
 
 - optimizer: SGD(lr=1e-3, momentum=0.9, decay=1e-5)
-- lambda evolution: $\lambda = \frac {2} {1 + exp(-10 * epoch / maxepoch)} - 1$
-<a href="https://www.codecogs.com/eqnedit.php?latex=\lambda&space;=&space;\frac&space;{2}&space;{1&space;&plus;&space;exp(-10&space;*&space;epoch&space;/&space;maxepoch)}&space;-&space;1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\lambda&space;=&space;\frac&space;{2}&space;{1&space;&plus;&space;exp(-10&space;*&space;epoch&space;/&space;maxepoch)}&space;-&space;1" title="\lambda = \frac {2} {1 + exp(-10 * epoch / maxepoch)} - 1" /></a>
+- lambda evolution: <a href="https://www.codecogs.com/eqnedit.php?latex=\lambda&space;=&space;\frac&space;{2}&space;{1&space;&plus;&space;exp(-10&space;*&space;epoch&space;/&space;maxepoch)}&space;-&space;1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\lambda&space;=&space;\frac&space;{2}&space;{1&space;&plus;&space;exp(-10&space;*&space;epoch&space;/&space;maxepoch)}&space;-&space;1" title="\lambda = \frac {2} {1 + exp(-10 * epoch / maxepoch)} - 1" /></a>  
+
 ## Results
     
 | Network       | Source (accuracy) | Target (accuracy) |
