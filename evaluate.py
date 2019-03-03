@@ -11,6 +11,8 @@ pp = Preprocessor(subset=None)
 path_to_model = {
     'cnn_grl_train_svhn': CNNGRL,
     'cnn_train_svhn': CNN,
+    'cnn_grl_train_mnist': CNNGRL,
+    'cnn_train_mnist': CNN
 }
 if CONFIG == 'DEBUG':
     path_to_model['debug'] = CNNGRL

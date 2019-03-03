@@ -42,7 +42,7 @@ class BaseModel():
             raise Exception("Trying to save model but it isn't built")
         if not os.path.isdir(save_dir):
             os.makedirs(save_dir)
-        model_path = os.path.join(save_dir, model_name)
+        model_path = os.path.join(save_dir, model_name + '.h5')
         self.model.save(model_path)
         print('Saved trained model at %s ' % model_path)
 
