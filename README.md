@@ -35,16 +35,13 @@ python evaluate.py
 
 ## Architectures
 
-To have a baseline of the performance without domain adaptation, I tested a simple Convolutional Neural Network:
-
-[cnn]
+To have a baseline of the performance without domain adaptation, I tested a simple Convolutional Neural Network. The architecture is described in this picture: [cnn].
 
 The network with domain adaptation was designed such that the architecture for label prediction was the same as the previous CNN for two main reasons:
 - compare similar networks performance
 - load pre trained weigths to make training easier
 
-![cnn_grl_model]
-![cnn_grl_fe]
+The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe].
 
 ## Hyperparameters
 
