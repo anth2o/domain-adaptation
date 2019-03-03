@@ -53,10 +53,10 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
     
 | Network       | Source (accuracy) | Target (accuracy) |
 | ------------- |:-----------------:| -----------------:|
-| CNN           | SVHN (0.91)       | MNIST (0.60)      |
-| CNN           | MNIST          | SVHN        |
-| CNN-GRL       | SVHN  (0.88)      | MNIST (0.71)      |
-| CNN-GRL       | MNIST        | SVHN      |
+| CNN           | SVHN (0.908)      | MNIST (0.601)     |
+| CNN           | MNIST (0.986)     | SVHN (0.230)      |
+| CNN-GRL       | SVHN  (0.883)     | MNIST (0.711)     |
+| CNN-GRL       | MNIST (0.982)     | SVHN (0.238)      |
 
 
 [cnn]: img/cnn.png "CNN architecture"
