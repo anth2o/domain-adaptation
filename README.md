@@ -37,7 +37,7 @@ python evaluate.py
 
 To have a baseline of the performance without domain adaptation, I tested a simple Convolutional Neural Network:
 
-![cnn]
+[cnn]
 
 The network with domain adaptation was designed such that the architecture for label prediction was the same as the previous CNN for two main reasons:
 - compare similar networks performance
