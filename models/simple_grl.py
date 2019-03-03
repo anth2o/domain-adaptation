@@ -3,11 +3,12 @@ from layers.grl import GRL
 from keras.layers import Input, Dense
 from keras.optimizers import SGD
 from keras.models import Model
+import numpy as np
 
 
-class TestGRL(BaseModel):
+class SimpleGRL(BaseModel):
     def __init__(self):
-        super(TestGRL, self).__init__()
+        super(SimpleGRL, self).__init__()
         self.loss = 'mae'
         self.lr = 0.1
         self.opt = SGD(lr=self.lr)

@@ -45,6 +45,11 @@ The network with domain adaptation was designed such that the architecture for l
 ![cnn_grl_model]
 ![cnn_grl_fe]
 
+## Hyperparameters
+
+- optimizer: SGD(lr=1e-3, momentum=0.9, decay=1e-5)
+- lambda evolution: $\lambda = \frac {2} {1 + exp(-10 * epoch / maxepoch)} - 1$
+
 ## Results
     
 | Network       | Source (accuracy) | Target (accuracy) |
