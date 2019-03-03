@@ -2,8 +2,11 @@ from models.cnn import CNN
 from models.cnn_grl import CNNGRL
 from utils.preprocessing import Preprocessor
 from utils.config import *
+from sklearn.manifold import t_sne
+from keras.models import Model
+import matplotlib.pyplot as plt
 
-pp = Preprocessor(subset=None)
+pp = Preprocessor(subset=100)
 (x_train_svhn, y_train_svhn), (x_test_svhn, y_test_svhn) = pp.get_one_domain_data('svhn')
 (x_train_mnist, y_train_mnist), (x_test_mnist, y_test_mnist) = pp.get_one_domain_data('mnist')
 
