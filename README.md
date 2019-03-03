@@ -16,14 +16,15 @@ python utils/download_data.py
 
 ## Configuration
 
-All the configuration variables are in the file utils/config.py
+All the configuration variables are in the file utils/config.py.  
+Make sure config to PROD to train and evaluate the whole architecture on (almost) all the dataset.
 
 ## Train a specific model
 
-Change model name in train.py (CNN or CNNGRL)
+To display training options
 
 ```bash
-python train.py
+python train.py -h
 ```
 
 ## Load weights and evaluate models

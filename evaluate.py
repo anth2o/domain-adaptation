@@ -9,11 +9,11 @@ pp = Preprocessor(subset=None)
 
 
 path_to_model = {
-    CNN_GRL_MODEL_NAME: CNNGRL,
-    CNN_MODEL_NAME: CNN,
+    'cnn_grl_train_svhn': CNNGRL,
+    'cnn_train_svhn': CNN,
 }
 if CONFIG == 'DEBUG':
-    path_to_model[MODEL_NAME] = CNNGRL
+    path_to_model['debug'] = CNNGRL
 
 for path, model_class in path_to_model.items():
     try:

@@ -24,7 +24,7 @@ class BaseModel():
             raise Exception("Trying to compile model but it isn't built")
         self.model.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'])
 
-    def _fit(self, x_train, y_train, x_test=None, y_test=None, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_LOG_FILE):
+    def _fit(self, x_train, y_train, x_test=None, y_test=None, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=None):
         if not self.model:
             raise Exception("Trying to fit model but it isn't built")
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=10e-4, patience=10, restore_best_weights=True, verbose=1)
@@ -37,7 +37,7 @@ class BaseModel():
             shuffle=True,
             callbacks=[reduce_lr, early_stopping, csv_logger],)
 
-    def _save(self, save_dir=SAVE_DIR, model_name=CNN_MODEL_NAME):
+    def _save(self, model_name, save_dir=SAVE_DIR):
         if not self.model:
             raise Exception("Trying to save model but it isn't built")
         if not os.path.isdir(save_dir):
@@ -52,7 +52,8 @@ class BaseModel():
         scores = self.model.evaluate(x_test, y_test, verbose=0)
         print('Test accuracy:', scores[1])
 
-    def _run_all(self, x_train, x_test, y_train, y_test, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_LOG_FILE, save_dir=SAVE_DIR, model_name=CNN_MODEL_NAME):
+    def _run_all(self, x_train, x_test, y_train, y_test, model_name, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, save_dir=SAVE_DIR):
+        log_file = 'logs/' + model_name + '.log'
         self._build(num_classes=num_classes)
         self._compile()
         print(self.model.summary())

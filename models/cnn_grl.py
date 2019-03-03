@@ -69,7 +69,7 @@ class CNNGRL(BaseModel):
         self.model_label.compile(loss=self.loss['label_predictor'], optimizer=self.opt, metrics=['accuracy'])
         self.model.compile(loss=self.loss, optimizer=self.opt, metrics=['accuracy'], loss_weights=self.loss_weights)
 
-    def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE):
+    def _fit(self, x_train, y_train, x_test, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=None):
         if not self.model:
             raise Exception("Trying to fit model but it isn't built")
         reduce_lr_label = ReduceLROnPlateau(monitor='val_label_predictor_loss', factor=0.2, patience=20, min_lr=10e-8, verbose=1)
@@ -84,7 +84,7 @@ class CNNGRL(BaseModel):
             callbacks=[csv_logger]
             )
 
-    def _save(self, save_dir=SAVE_DIR, model_name=CNN_MODEL_NAME):
+    def _save(self, model_name, save_dir=SAVE_DIR):
         if not self.model:
             raise Exception("Trying to save model but it isn't built")
         if not os.path.isdir(save_dir):
@@ -104,7 +104,8 @@ class CNNGRL(BaseModel):
         scores = self.model_label.evaluate(x_test, y_test, verbose=0)
         print('Test accuracy:', scores[1])
 
-    def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, log_file=CNN_GRL_LOG_FILE, save_dir=SAVE_DIR, model_name=CNN_GRL_MODEL_NAME, pre_trained_model_name=CNN_MODEL_NAME):
+    def _run_all(self, x_train, x_test, y_train, y_test, x_train_unlabelled, y_train_unlabelled, x_test_unlabelled, y_test_unlabelled, model_name, pre_trained_model_name, num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, epochs=EPOCHS, save_dir=SAVE_DIR):
+        log_file = 'logs/' + model_name + '.log'
         self._build(num_classes=num_classes)
         self._load_pre_trained_weights(pre_trained_model_name)
         print(self.model.summary())
