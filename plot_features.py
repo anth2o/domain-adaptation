@@ -2,9 +2,10 @@ from models.cnn import CNN
 from models.cnn_grl import CNNGRL
 from utils.preprocessing import Preprocessor
 from utils.config import *
-from sklearn.manifold import t_sne
 from keras.models import Model
+from sklearn.manifold import t_sne
 import matplotlib.pyplot as plt
+import os
 
 pp = Preprocessor(subset=100)
 (x_train_svhn, y_train_svhn), (x_test_svhn, y_test_svhn) = pp.get_one_domain_data('svhn')
@@ -16,12 +17,13 @@ def plot_features(model_class=CNNGRL, model_weights='cnn_grl_train_svhn'):
     model._load_weights(model_weights)
     
     if model_class==CNNGRL:
-        model = model.model_label
+        model_input = model.model_label.input
+        model_output = model.model_label.get_layer('dropout_label_1').output
     else:
-        model = model.model
+        model_input = model.model.input
+        model_output = model.model.layers[-3].output
 
-    intermediate_layer_model = Model(inputs=model.input,
-                                     outputs=model.layers[-2].output)
+    intermediate_layer_model = Model(inputs=model_input, outputs=model_output)
     features_svhn = intermediate_layer_model.predict(x_train_svhn)
     features_mnist = intermediate_layer_model.predict(x_train_mnist)
 
@@ -30,7 +32,10 @@ def plot_features(model_class=CNNGRL, model_weights='cnn_grl_train_svhn'):
 
     plt.scatter(tsne_svhn[:, 0], tsne_svhn[:, 1], color='b')
     plt.scatter(tsne_mnist[:, 0], tsne_mnist[:, 1], color='r')
-    plt.show()
+    save_dir = 'img/tsne_features/'
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+    plt.savefig(save_dir + model_weights + '.png')
 
 plot_features()
 plot_features(CNN, 'cnn_train_svhn')

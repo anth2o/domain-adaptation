@@ -72,4 +72,4 @@ class BaseModel():
 
     def _plot_model(self):
         model_name = self.__class__.__name__.lower()
-        plot_model(self.model, to_file='img/' + model_name + '.png', show_layer_names=True, show_shapes=True)
+        plot_model(self.model, to_file='img/model_architecture/' + model_name + '.png', show_layer_names=True, show_shapes=True)

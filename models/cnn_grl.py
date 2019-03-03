@@ -142,7 +142,7 @@ class CNNGRL(BaseModel):
 
     def _plot_model(self):
         model_name = 'cnn_grl'
-        model_path = 'img/' + model_name
+        model_path = 'img/model_architecture/' + model_name
         if not os.path.isdir(model_path):
             os.makedirs(model_path)
         plot_model(self.model, to_file=model_path + '/model.png', show_layer_names=True, show_shapes=True)
