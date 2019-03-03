@@ -62,10 +62,6 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
 | CNN-GRL       | SVHN  (0.883)     | MNIST (0.711)     |
 | CNN-GRL       | MNIST (0.982)     | SVHN (0.238)      |
 
-## References
-
-[paper]
-
 
 [cnn]: img/cnn.png "CNN architecture"
 [cnn_grl_model]: img/cnn_grl/model.png "CNN-GRL architecture"
