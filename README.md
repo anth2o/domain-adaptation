@@ -1,4 +1,9 @@
-# Classification + Domain Adaptation
+# Classification and Domain Adaptation on MNIST and SVHN datasets
+
+## Overview
+
+This repo implements a domain adaptation neural networks. The paper *Unsupervised Domain Adaptation by Backpropagation* by Yaroslav Ganin and Victor Lempitsky was a great source of inspiration to design the neural networks.  
+The goal of this repo is to implement a network able to classify MNIST samples by using only **SVHN labelled** samples and **MNIST unlabelled** samples during training.
 
 ## Depedencies
 
@@ -58,7 +63,12 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
 | CNN-GRL       | SVHN  (0.883)     | MNIST (0.711)     |
 | CNN-GRL       | MNIST (0.982)     | SVHN (0.238)      |
 
+## References
+
+[paper]
+
 
 [cnn]: img/cnn.png "CNN architecture"
 [cnn_grl_model]: img/cnn_grl/model.png "CNN-GRL architecture"
 [cnn_grl_fe]: img/cnn_grl/feature_extractor.png "CNN-GRL architecture"
+[paper]: https://arxiv.org/pdf/1409.7495.pdf
