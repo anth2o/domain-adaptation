@@ -58,7 +58,7 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
 | Network       | Source (accuracy) | Target (accuracy) |
 | ------------- |:-----------------:| -----------------:|
 | CNN           | SVHN (0.908)      | MNIST (0.601)     |
-| CNN-GRL       | SVHN  (0.883)     | MNIST **(0.711)**     |
+| CNN-GRL       | SVHN  (0.883)     | **MNIST (0.711)**     |
 | CNN           | MNIST (0.986)     | SVHN (0.230)      |
 | CNN-GRL       | MNIST (0.982)     | SVHN (0.238)      |
 
