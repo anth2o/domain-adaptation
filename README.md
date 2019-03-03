@@ -47,6 +47,7 @@ The architecture is described in those pictures: [cnn_grl_model] and [cnn_grl_fe
 
 - optimizer: SGD(lr=1e-3, momentum=0.9, decay=1e-5)
 - lambda evolution: $\lambda = \frac {2} {1 + exp(-10 * epoch / maxepoch)} - 1$
+<img src="https://latex.codecogs.com/gif.latex?O_t=\text \lambda = \frac {2} {1 + exp(-10 * epoch / maxepoch)} - 1 " /> 
 
 ## Results
     
