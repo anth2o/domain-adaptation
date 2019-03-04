@@ -7,7 +7,7 @@ from sklearn.manifold import t_sne
 import matplotlib.pyplot as plt
 import os
 
-pp = Preprocessor(subset=100)
+pp = Preprocessor(subset=None)
 (x_train_svhn, y_train_svhn), (x_test_svhn, y_test_svhn) = pp.get_one_domain_data('svhn')
 (x_train_mnist, y_train_mnist), (x_test_mnist, y_test_mnist) = pp.get_one_domain_data('mnist')
 
@@ -30,12 +30,15 @@ def plot_features(model_class=CNNGRL, model_weights='cnn_grl_train_svhn'):
     tsne_svhn = t_sne.TSNE().fit_transform(features_svhn)
     tsne_mnist = t_sne.TSNE().fit_transform(features_mnist)
 
-    plt.scatter(tsne_svhn[:, 0], tsne_svhn[:, 1], color='b')
-    plt.scatter(tsne_mnist[:, 0], tsne_mnist[:, 1], color='r')
+    plt.scatter(tsne_svhn[:, 0], tsne_svhn[:, 1], color='b', s=1, label='svhn')
+    plt.scatter(tsne_mnist[:, 0], tsne_mnist[:, 1], color='r', s=1, label='mnist')
+    plt.title(model_weights)
+    plt.legend()
     save_dir = 'img/tsne_features/'
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
     plt.savefig(save_dir + model_weights + '.png')
+    print('Figure saved at ' + save_dir + model_weights + '.png')
 
 plot_features()
 plot_features(CNN, 'cnn_train_svhn')
